@@ -249,7 +249,7 @@ export function BoardClient() {
                             <motion.div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
-                              {...provided.dragHandleProps}
+                              {...(provided.dragHandleProps as any)}
                               layout
                               initial={{ opacity: 0, y: 8 }}
                               animate={{ opacity: 1, y: 0 }}

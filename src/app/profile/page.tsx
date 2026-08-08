@@ -287,8 +287,8 @@ export default function ProfilePage() {
                           )}
                           style={{
                             backgroundColor: c.hex,
-                            ringColor: c.hex,
-                          }}
+                            '--tw-ring-color': c.hex,
+                          } as React.CSSProperties}
                         />
                         <span className={cn('text-xs font-medium', isActive ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)]')}>
                           {c.label}
