@@ -7,21 +7,32 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user, token } = useStore();
+  const { user, token, _hasHydrated } = useStore();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // Basic auth protection
+    // Wait for Zustand to rehydrate from localStorage before checking auth
+    if (!_hasHydrated) return;
+
     if (!token || !user) {
       if (pathname !== "/login") {
         router.push("/login");
       }
     }
-  }, [token, user, router, pathname]);
+  }, [token, user, router, pathname, _hasHydrated]);
+
+  // Show nothing while store is hydrating from localStorage
+  if (!_hasHydrated) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="w-8 h-8 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!token || !user) {
-    return null; // Prevent rendering dashboard before redirecting to login
+    return null;
   }
 
   return (

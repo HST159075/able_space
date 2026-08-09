@@ -34,7 +34,7 @@ const NAV_ITEMS: { id: SettingsTab; label: string; icon: React.ElementType }[] =
 ];
 
 export default function ProfilePage() {
-  const { user, token, logout, updateUser } = useStore();
+  const { user, token, logout, updateUser, _hasHydrated } = useStore();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
@@ -44,14 +44,24 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (!_hasHydrated) return;
     if (!token || !user) {
       router.push('/login');
     }
-  }, [token, user, router]);
+  }, [token, user, router, _hasHydrated]);
+
+  if (!_hasHydrated) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="w-8 h-8 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!token || !user) {
     return null;
   }
+
 
   const filteredNav = NAV_ITEMS.filter(item =>
     item.label.toLowerCase().includes(search.toLowerCase())
