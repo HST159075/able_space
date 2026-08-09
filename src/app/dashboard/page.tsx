@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
 import { api } from '@/lib/axios';
+import { useSession } from '@/lib/auth-client';
 
 export default function DashboardRedirect() {
   const router = useRouter();
@@ -11,8 +12,28 @@ export default function DashboardRedirect() {
   const [error, setError] = useState<string | null>(null);
   const isSeeding = React.useRef(false);
 
+  const setAuth = useStore((state) => state.setAuth);
+  const { data: session, isPending } = useSession();
+
   useEffect(() => {
+    if (isPending) return;
+
     if (!token) {
+      if (session?.user?.email) {
+        // We have a Google session, but no backend JWT yet.
+        // Sync with backend to get the JWT token.
+        api.post('/auth/login', { email: session.user.email })
+          .then((res) => {
+            const { accessToken, user } = res.data.data;
+            setAuth(accessToken, user);
+          })
+          .catch((err) => {
+            console.error('Failed backend sync:', err);
+            router.push('/login');
+          });
+        return;
+      }
+      // No token and no Google session
       router.push('/login');
       return;
     }
