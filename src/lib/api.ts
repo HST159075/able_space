@@ -46,6 +46,18 @@ export const useTeams = (workspaceId: string) => {
   });
 };
 
+export const useTeam = (workspaceId: string, teamId: string) => {
+  return useQuery({
+    queryKey: ['team', workspaceId, teamId],
+    queryFn: async () => {
+      const res = await api.get(`/workspaces/${workspaceId}/teams`);
+      const teams = res.data.data;
+      return teams.find((t: any) => t.id === teamId);
+    },
+    enabled: !!workspaceId && !!teamId,
+  });
+};
+
 export const useCreateTeam = (workspaceId: string) => {
   const queryClient = useQueryClient();
   return useMutation({

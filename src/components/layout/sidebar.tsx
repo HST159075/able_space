@@ -121,12 +121,24 @@ export function Sidebar() {
                           exit={{ height: 0, opacity: 0 }}
                           className="space-y-1 overflow-hidden"
                         >
-                          {teams?.map((team: any) => (
-                            <div key={team.id} className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-[var(--foreground)] hover:bg-[var(--muted)] cursor-pointer transition-colors ml-4">
-                              <Users className="w-4 h-4 text-[var(--muted-foreground)] shrink-0" />
-                              <span className="truncate">{team.name}</span>
-                            </div>
-                          ))}
+                          {teams?.map((team: any) => {
+                            const isActive = pathname.includes(`/teams/${team.id}`);
+                            return (
+                              <Link
+                                key={team.id}
+                                href={`/${workspaceId}/teams/${team.id}`}
+                                className={cn(
+                                  'flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors ml-4',
+                                  isActive
+                                    ? 'bg-[var(--muted)] text-[var(--primary)] font-medium'
+                                    : 'text-[var(--foreground)] hover:bg-[var(--muted)]'
+                                )}
+                              >
+                                <Users className={cn('w-4 h-4 shrink-0', isActive ? 'text-[var(--primary)]' : 'text-[var(--muted-foreground)]')} />
+                                <span className="truncate">{team.name}</span>
+                              </Link>
+                            );
+                          })}
                           {teams?.length === 0 && (
                             <p className="text-xs text-[var(--muted-foreground)] px-2 py-1 italic ml-4">No teams yet</p>
                           )}
