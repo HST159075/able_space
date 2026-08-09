@@ -6,7 +6,7 @@ import { useStore } from '@/lib/store';
 import { api } from '@/lib/axios';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { signIn } from '@/lib/auth-client';
+
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -26,17 +26,10 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setLoading(true);
-    try {
-      await signIn.social({
-        provider: 'google',
-        callbackURL: '/dashboard', // Redirect to dashboard after login
-      });
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
-    }
+    // Redirect directly to backend Google OAuth — backend handles everything
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'https://ablebspace.onrender.com'}/auth/google`;
   };
 
   return (
