@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/lib/store';
 
-export default function AuthCallbackPage() {
+function AuthCallbackInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setAuth = useStore((state) => state.setAuth);
@@ -20,6 +20,7 @@ export default function AuthCallbackPage() {
 
     try {
       const user = JSON.parse(decodeURIComponent(userParam));
+      // Save to Zustand → persist middleware saves to localStorage automatically
       setAuth(token, user);
       router.replace('/dashboard');
     } catch {
@@ -34,5 +35,20 @@ export default function AuthCallbackPage() {
         <p className="text-[var(--muted-foreground)] text-sm">Signing you in...</p>
       </div>
     </div>
+  );
+}
+
+// useSearchParams() requires Suspense boundary in Next.js 14+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-screen items-center justify-center bg-[var(--muted)]">
+          <div className="w-10 h-10 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <AuthCallbackInner />
+    </Suspense>
   );
 }
