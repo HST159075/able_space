@@ -158,11 +158,15 @@ export function TaskDetailModal({
   });
 
   const addComment = useMutation({
-    mutationFn: async (payload?: { content: string; parentCommentId?: string }) => {
+    mutationFn: async (payload?: {
+      content: string;
+      parentCommentId?: string;
+    }) => {
       const contentStr = payload?.content || comment;
       if (!contentStr.trim()) return;
       const data: any = { content: contentStr.trim() };
-      if (payload?.parentCommentId) data.parentCommentId = payload.parentCommentId;
+      if (payload?.parentCommentId)
+        data.parentCommentId = payload.parentCommentId;
       else if (replyingTo) data.parentCommentId = replyingTo;
 
       const res = await api.post(`/tasks/${taskId}/comments`, data);
@@ -376,8 +380,17 @@ export function TaskDetailModal({
                                 type="checkbox"
                                 checked={sub.status === "COMPLETED"}
                                 onChange={async (e) => {
-                                  await api.patch(`/projects/${projectId}/tasks/${sub.id}`, { status: e.target.checked ? "COMPLETED" : "TODO" });
-                                  queryClient.invalidateQueries({ queryKey: ["task", taskId] });
+                                  await api.patch(
+                                    `/projects/${projectId}/tasks/${sub.id}`,
+                                    {
+                                      status: e.target.checked
+                                        ? "COMPLETED"
+                                        : "TODO",
+                                    },
+                                  );
+                                  queryClient.invalidateQueries({
+                                    queryKey: ["task", taskId],
+                                  });
                                 }}
                                 className="w-4 h-4 cursor-pointer accent-[var(--primary)]"
                               />
@@ -497,8 +510,16 @@ export function TaskDetailModal({
                   <div className="space-y-4">
                     {nestedComments?.map((c: any) => {
                       const renderComment = (c: any, isReply = false) => (
-                        <div key={c.id} className={cn(isReply ? "ml-8 mt-3" : "mt-4")}>
-                          <div className={cn("border border-[var(--border)] rounded-xl p-4 bg-white dark:bg-[var(--card)] shadow-sm", isReply ? "bg-[var(--muted)]/20" : "")}>
+                        <div
+                          key={c.id}
+                          className={cn(isReply ? "ml-8 mt-3" : "mt-4")}
+                        >
+                          <div
+                            className={cn(
+                              "border border-[var(--border)] rounded-xl p-4 bg-white dark:bg-[var(--card)] shadow-sm",
+                              isReply ? "bg-[var(--muted)]/20" : "",
+                            )}
+                          >
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
                                 <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[var(--primary)] to-indigo-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
@@ -509,12 +530,25 @@ export function TaskDetailModal({
                                 </span>
                                 <span className="text-xs text-[var(--muted-foreground)]">
                                   {c.createdAt
-                                    ? format(new Date(c.createdAt), "MMM d, h:mm a")
+                                    ? format(
+                                        new Date(c.createdAt),
+                                        "MMM d, h:mm a",
+                                      )
                                     : "just now"}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 text-[var(--muted-foreground)]">
-                                <button onClick={() => { setReplyingTo(replyingTo === c.id ? null : c.id); setComment(''); }} className="text-xs hover:text-[var(--primary)] transition-colors">Reply</button>
+                                <button
+                                  onClick={() => {
+                                    setReplyingTo(
+                                      replyingTo === c.id ? null : c.id,
+                                    );
+                                    setComment("");
+                                  }}
+                                  className="text-xs hover:text-[var(--primary)] transition-colors"
+                                >
+                                  Reply
+                                </button>
                                 <MoreHorizontal className="w-4 h-4 cursor-pointer" />
                               </div>
                             </div>
@@ -522,7 +556,7 @@ export function TaskDetailModal({
                               {c.content}
                             </p>
                           </div>
-                          
+
                           {replyingTo === c.id && (
                             <div className="mt-3 pl-8">
                               <div className="border border-[var(--border)] rounded-xl p-3 bg-white dark:bg-[var(--card)] flex items-center gap-3">
@@ -538,16 +572,30 @@ export function TaskDetailModal({
                                   onChange={(e) => setComment(e.target.value)}
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter" && comment.trim())
-                                      addComment.mutate({ content: comment.trim(), parentCommentId: c.id });
+                                      addComment.mutate({
+                                        content: comment.trim(),
+                                        parentCommentId: c.id,
+                                      });
                                     if (e.key === "Escape") {
                                       setReplyingTo(null);
-                                      setComment('');
+                                      setComment("");
                                     }
                                   }}
                                 />
                                 <Send
-                                  className={cn("w-4 h-4 cursor-pointer", comment.trim() ? "text-[var(--primary)]" : "text-[var(--muted-foreground)]")}
-                                  onClick={() => { if (comment.trim()) addComment.mutate({ content: comment.trim(), parentCommentId: c.id }); }}
+                                  className={cn(
+                                    "w-4 h-4 cursor-pointer",
+                                    comment.trim()
+                                      ? "text-[var(--primary)]"
+                                      : "text-[var(--muted-foreground)]",
+                                  )}
+                                  onClick={() => {
+                                    if (comment.trim())
+                                      addComment.mutate({
+                                        content: comment.trim(),
+                                        parentCommentId: c.id,
+                                      });
+                                  }}
                                 />
                               </div>
                             </div>
@@ -556,7 +604,9 @@ export function TaskDetailModal({
                           {c.replies?.length > 0 && (
                             <div className="space-y-1 relative">
                               <div className="absolute left-3 top-0 bottom-6 w-px bg-[var(--border)]" />
-                              {c.replies.map((reply: any) => renderComment(reply, true))}
+                              {c.replies.map((reply: any) =>
+                                renderComment(reply, true),
+                              )}
                             </div>
                           )}
                         </div>
@@ -589,7 +639,8 @@ export function TaskDetailModal({
                               : "text-[var(--muted-foreground)]",
                           )}
                           onClick={() => {
-                            if (comment.trim()) addComment.mutate({ content: comment.trim() });
+                            if (comment.trim())
+                              addComment.mutate({ content: comment.trim() });
                           }}
                         />
                       </div>
@@ -823,25 +874,54 @@ export function TaskDetailModal({
                             Members
                           </span>
                           <div className="relative">
-                            <div 
+                            <div
                               className="text-sm font-medium cursor-pointer p-1 -ml-1 rounded hover:bg-[var(--muted)] flex flex-wrap gap-1"
-                              onClick={(e) => { e.stopPropagation(); setMembersMenuOpen(!membersMenuOpen); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setMembersMenuOpen(!membersMenuOpen);
+                              }}
                             >
-                              {task.assignees?.length > 0 ? task.assignees.map((a: any) => <span key={a.id} className="bg-[var(--primary)] text-[var(--primary-foreground)] px-2 py-0.5 rounded-full text-xs">{a.name}</span>) : "Add members..."}
+                              {task.assignees?.length > 0
+                                ? task.assignees.map((a: any) => (
+                                    <span
+                                      key={a.id}
+                                      className="bg-[var(--primary)] text-[var(--primary-foreground)] px-2 py-0.5 rounded-full text-xs"
+                                    >
+                                      {a.name}
+                                    </span>
+                                  ))
+                                : "Add members..."}
                             </div>
                             {membersMenuOpen && (
                               <div className="absolute top-full left-0 mt-1 w-48 bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-xl py-1 z-50 max-h-48 overflow-y-auto">
                                 {workspace?.members?.map((m: any) => {
-                                  const isSelected = task.assignees?.some((a: any) => a.id === m.id);
+                                  const isSelected = task.assignees?.some(
+                                    (a: any) => a.id === m.id,
+                                  );
                                   return (
-                                    <div key={m.id} className="px-3 py-2 text-sm hover:bg-[var(--muted)] cursor-pointer flex items-center justify-between" onClick={(e) => {
-                                      e.stopPropagation();
-                                      const currentIds = task.assignees?.map((a: any) => a.id) || [];
-                                      const newIds = isSelected ? currentIds.filter((id: string) => id !== m.id) : [...currentIds, m.id];
-                                      updateTask.mutate({ assigneeIds: newIds });
-                                    }}>
+                                    <div
+                                      key={m.id}
+                                      className="px-3 py-2 text-sm hover:bg-[var(--muted)] cursor-pointer flex items-center justify-between"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const currentIds =
+                                          task.assignees?.map(
+                                            (a: any) => a.id,
+                                          ) || [];
+                                        const newIds = isSelected
+                                          ? currentIds.filter(
+                                              (id: string) => id !== m.id,
+                                            )
+                                          : [...currentIds, m.id];
+                                        updateTask.mutate({
+                                          assigneeIds: newIds,
+                                        });
+                                      }}
+                                    >
                                       {m.name}
-                                      {isSelected && <Check className="w-4 h-4" />}
+                                      {isSelected && (
+                                        <Check className="w-4 h-4" />
+                                      )}
                                     </div>
                                   );
                                 })}
@@ -855,11 +935,15 @@ export function TaskDetailModal({
                           <span className="text-xs font-medium text-[var(--muted-foreground)]">
                             Dates
                           </span>
-                          <input 
+                          <input
                             type="date"
                             className="bg-transparent text-sm font-medium focus:outline-none cursor-pointer hover:bg-[var(--muted)] p-1 -ml-1 rounded"
-                            value={task.dueDate ? task.dueDate.substring(0, 10) : ""}
-                            onChange={(e) => updateTask.mutate({ dueDate: e.target.value })}
+                            value={
+                              task.dueDate ? task.dueDate.substring(0, 10) : ""
+                            }
+                            onChange={(e) =>
+                              updateTask.mutate({ dueDate: e.target.value })
+                            }
                           />
                         </div>
 
@@ -869,28 +953,59 @@ export function TaskDetailModal({
                             Labels
                           </span>
                           <div className="relative">
-                            <div 
+                            <div
                               className="text-sm font-medium cursor-pointer p-1 -ml-1 rounded hover:bg-[var(--muted)] flex flex-wrap gap-1"
-                              onClick={(e) => { e.stopPropagation(); setLabelsMenuOpen(!labelsMenuOpen); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setLabelsMenuOpen(!labelsMenuOpen);
+                              }}
                             >
-                              {task.labels?.length > 0 ? task.labels.map((l: any) => <span key={l.id} className="px-2 py-0.5 rounded text-white text-xs" style={{ backgroundColor: l.color }}>{l.name}</span>) : "Add labels..."}
+                              {task.labels?.length > 0
+                                ? task.labels.map((l: any) => (
+                                    <span
+                                      key={l.id}
+                                      className="px-2 py-0.5 rounded text-white text-xs"
+                                      style={{ backgroundColor: l.color }}
+                                    >
+                                      {l.name}
+                                    </span>
+                                  ))
+                                : "Add labels..."}
                             </div>
                             {labelsMenuOpen && (
                               <div className="absolute top-full left-0 mt-1 w-48 bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-xl py-1 z-50 max-h-48 overflow-y-auto">
                                 {workspaceLabels?.map((l: any) => {
-                                  const isSelected = task.labels?.some((lbl: any) => lbl.id === l.id);
+                                  const isSelected = task.labels?.some(
+                                    (lbl: any) => lbl.id === l.id,
+                                  );
                                   return (
-                                    <div key={l.id} className="px-3 py-2 text-sm hover:bg-[var(--muted)] cursor-pointer flex items-center justify-between" onClick={(e) => {
-                                      e.stopPropagation();
-                                      const currentIds = task.labels?.map((lbl: any) => lbl.id) || [];
-                                      const newIds = isSelected ? currentIds.filter((id: string) => id !== l.id) : [...currentIds, l.id];
-                                      updateTask.mutate({ labelIds: newIds });
-                                    }}>
+                                    <div
+                                      key={l.id}
+                                      className="px-3 py-2 text-sm hover:bg-[var(--muted)] cursor-pointer flex items-center justify-between"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const currentIds =
+                                          task.labels?.map(
+                                            (lbl: any) => lbl.id,
+                                          ) || [];
+                                        const newIds = isSelected
+                                          ? currentIds.filter(
+                                              (id: string) => id !== l.id,
+                                            )
+                                          : [...currentIds, l.id];
+                                        updateTask.mutate({ labelIds: newIds });
+                                      }}
+                                    >
                                       <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: l.color }} />
+                                        <div
+                                          className="w-3 h-3 rounded-full"
+                                          style={{ backgroundColor: l.color }}
+                                        />
                                         {l.name}
                                       </div>
-                                      {isSelected && <Check className="w-4 h-4" />}
+                                      {isSelected && (
+                                        <Check className="w-4 h-4" />
+                                      )}
                                     </div>
                                   );
                                 })}
@@ -905,25 +1020,51 @@ export function TaskDetailModal({
                             Teams
                           </span>
                           <div className="relative">
-                            <div 
+                            <div
                               className="text-sm font-medium cursor-pointer p-1 -ml-1 rounded hover:bg-[var(--muted)] flex flex-wrap gap-1"
-                              onClick={(e) => { e.stopPropagation(); setTeamsMenuOpen(!teamsMenuOpen); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setTeamsMenuOpen(!teamsMenuOpen);
+                              }}
                             >
-                              {task.teams?.length > 0 ? task.teams.map((t: any) => <span key={t.id} className="bg-[var(--muted)] border border-[var(--border)] px-2 py-0.5 rounded text-xs">{t.name}</span>) : "Add teams..."}
+                              {task.teams?.length > 0
+                                ? task.teams.map((t: any) => (
+                                    <span
+                                      key={t.id}
+                                      className="bg-[var(--muted)] border border-[var(--border)] px-2 py-0.5 rounded text-xs"
+                                    >
+                                      {t.name}
+                                    </span>
+                                  ))
+                                : "Add teams..."}
                             </div>
                             {teamsMenuOpen && (
                               <div className="absolute top-full left-0 mt-1 w-48 bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-xl py-1 z-50 max-h-48 overflow-y-auto">
                                 {workspaceTeams?.map((t: any) => {
-                                  const isSelected = task.teams?.some((tm: any) => tm.id === t.id);
+                                  const isSelected = task.teams?.some(
+                                    (tm: any) => tm.id === t.id,
+                                  );
                                   return (
-                                    <div key={t.id} className="px-3 py-2 text-sm hover:bg-[var(--muted)] cursor-pointer flex items-center justify-between" onClick={(e) => {
-                                      e.stopPropagation();
-                                      const currentIds = task.teams?.map((tm: any) => tm.id) || [];
-                                      const newIds = isSelected ? currentIds.filter((id: string) => id !== t.id) : [...currentIds, t.id];
-                                      updateTask.mutate({ teamIds: newIds });
-                                    }}>
+                                    <div
+                                      key={t.id}
+                                      className="px-3 py-2 text-sm hover:bg-[var(--muted)] cursor-pointer flex items-center justify-between"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const currentIds =
+                                          task.teams?.map((tm: any) => tm.id) ||
+                                          [];
+                                        const newIds = isSelected
+                                          ? currentIds.filter(
+                                              (id: string) => id !== t.id,
+                                            )
+                                          : [...currentIds, t.id];
+                                        updateTask.mutate({ teamIds: newIds });
+                                      }}
+                                    >
                                       {t.name}
-                                      {isSelected && <Check className="w-4 h-4" />}
+                                      {isSelected && (
+                                        <Check className="w-4 h-4" />
+                                      )}
                                     </div>
                                   );
                                 })}
