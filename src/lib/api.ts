@@ -69,6 +69,28 @@ export const useCreateTeam = (workspaceId: string) => {
   });
 };
 
+export const useAddTeamMember = (workspaceId: string, teamId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const res = await api.post(`/workspaces/${workspaceId}/teams/${teamId}/members/${userId}`);
+      return res.data.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['team', workspaceId, teamId] }),
+  });
+};
+
+export const useRemoveTeamMember = (workspaceId: string, teamId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const res = await api.delete(`/workspaces/${workspaceId}/teams/${teamId}/members/${userId}`);
+      return res.data.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['team', workspaceId, teamId] }),
+  });
+};
+
 // --- Projects ---
 export const useProjects = (workspaceId: string) => {
   return useQuery({
