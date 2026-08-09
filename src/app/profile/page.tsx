@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '@/lib/store';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
@@ -43,8 +43,13 @@ export default function ProfilePage() {
   const [title, setTitle] = useState('');
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    if (!token || !user) {
+      router.push('/login');
+    }
+  }, [token, user, router]);
+
   if (!token || !user) {
-    router.push('/login');
     return null;
   }
 
