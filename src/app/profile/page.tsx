@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@/lib/store';
-import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import {
-  ArrowLeft, Search, User, Palette, Sun, Moon, Monitor, Circle, Pencil,
+  ArrowLeft, Search, User, Sun, Moon, Monitor, Circle, Pencil,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

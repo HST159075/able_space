@@ -29,6 +29,7 @@ export default function LoginPage() {
   const handleGoogleLogin = () => {
     setLoading(true);
     // Redirect directly to backend Google OAuth — backend handles everything
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'https://ablebspace.onrender.com'}/auth/google`;
   };
 

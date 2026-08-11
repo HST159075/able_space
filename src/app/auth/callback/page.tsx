@@ -20,7 +20,6 @@ function AuthCallbackInner() {
 
     try {
       const user = JSON.parse(decodeURIComponent(userParam));
-      // Save to Zustand → persist middleware saves to localStorage automatically
       setAuth(token, user);
       router.replace('/dashboard');
     } catch {
