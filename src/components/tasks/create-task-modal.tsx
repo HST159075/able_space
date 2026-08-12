@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 const PRIORITIES = [
   { value: 'NO_PRIORITY', label: 'No Priority', color: 'bg-gray-400' },
   { value: 'LOW',         label: 'Low',         color: 'bg-blue-500' },
-  { value: 'NORMAL',      label: 'Normal',      color: 'bg-yellow-500' },
+  { value: 'MEDIUM',      label: 'Medium',      color: 'bg-yellow-500' },
   { value: 'HIGH',        label: 'High',        color: 'bg-orange-500' },
   { value: 'URGENT',      label: 'Urgent',      color: 'bg-red-500' },
 ];
@@ -37,7 +37,7 @@ export function CreateTaskModal({ open, onClose, defaultStatus = 'TODO' }: Creat
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState('NO_PRIORITY');
+  const [priority, setPriority] = useState('MEDIUM');
   const [status, setStatus] = useState(defaultStatus);
   const [dueDate, setDueDate] = useState('');
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
@@ -59,7 +59,7 @@ export function CreateTaskModal({ open, onClose, defaultStatus = 'TODO' }: Creat
         labelIds: selectedLabels.length > 0 ? selectedLabels : undefined,
       });
       toast.success('Task created!');
-      setTitle(''); setDescription(''); setPriority('NO_PRIORITY');
+      setTitle(''); setDescription(''); setPriority('MEDIUM');
       setStatus(defaultStatus); setDueDate(''); setSelectedLabels([]);
       onClose();
     } catch {

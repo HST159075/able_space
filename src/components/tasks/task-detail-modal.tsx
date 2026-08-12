@@ -49,12 +49,12 @@ const PRIORITIES = [
   },
   { value: "LOW", label: "Low", icon: "signal-low", color: "text-blue-500" },
   {
-    value: "NORMAL",
-    label: "Normal",
+    value: "MEDIUM",
+    label: "Medium",
     icon: "signal-medium",
     color: "text-yellow-500",
   },
-  { value: "HIGH", label: "High", icon: "signal-high", color: "text-red-500" },
+  { value: "HIGH", label: "High", icon: "signal-high", color: "text-orange-500" },
   {
     value: "URGENT",
     label: "Urgent",
