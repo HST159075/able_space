@@ -9,12 +9,13 @@ import { motion } from 'framer-motion';
 
 
 export default function LoginPage() {
-  const [loading, setLoading] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
   const setAuth = useStore((state) => state.setAuth);
 
   const handleGuestLogin = async () => {
-    setLoading(true);
+    setIsGuestLoading(true);
     try {
       const res = await api.post('/auth/guest');
       const { accessToken, user } = res.data.data;
@@ -22,12 +23,12 @@ export default function LoginPage() {
       router.push('/dashboard');
     } catch (error) {
       console.error(error);
-      setLoading(false);
+      setIsGuestLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
-    setLoading(true);
+    setIsGoogleLoading(true);
     // Redirect directly to backend Google OAuth — backend handles everything
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'https://ablebspace.onrender.com'}/auth/google`;
@@ -49,10 +50,10 @@ export default function LoginPage() {
         <div className="flex flex-col gap-4">
           <Button 
             onClick={handleGuestLogin} 
-            disabled={loading}
+            disabled={isGuestLoading || isGoogleLoading}
             className="w-full text-lg h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 shadow-lg"
           >
-            {loading ? 'Logging in...' : 'Continue as Guest'}
+            {isGuestLoading ? 'Logging in...' : 'Continue as Guest'}
           </Button>
           
           <div className="relative">
@@ -68,10 +69,10 @@ export default function LoginPage() {
 
           <Button 
             onClick={handleGoogleLogin} 
-            disabled={loading}
+            disabled={isGuestLoading || isGoogleLoading}
             className="w-full text-lg h-12 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 shadow-sm flex items-center justify-center gap-2"
           >
-            {loading ? (
+            {isGoogleLoading ? (
               <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
             ) : (
               <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -81,7 +82,7 @@ export default function LoginPage() {
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
               </svg>
             )}
-            {loading ? 'Redirecting...' : 'Sign in with Google'}
+            {isGoogleLoading ? 'Redirecting...' : 'Sign in with Google'}
           </Button>
         </div>
       </motion.div>

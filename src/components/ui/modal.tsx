@@ -42,10 +42,10 @@ export function Modal({ open, onClose, title, children, size = 'lg' }: ModalProp
           onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className={`w-full ${sizeMap[size]} bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-2xl flex flex-col max-h-[90vh]`}
           >
             {title && (

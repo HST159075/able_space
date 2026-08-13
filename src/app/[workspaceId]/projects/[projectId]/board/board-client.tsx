@@ -253,17 +253,19 @@ export function BoardClient() {
                               layout
                               initial={{ opacity: 0, y: 8 }}
                               animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: index * 0.04 }}
+                              whileHover={{ y: -4, scale: 1.01 }}
+                              whileTap={{ scale: 0.98 }}
+                              transition={{ duration: 0.2 }}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setOpenMenuId(null);
                                 setSelectedTaskId(task.id);
                               }}
                               className={cn(
-                                "bg-[var(--card)] p-4 rounded-xl border border-[var(--border)] shadow-sm mb-3 group cursor-pointer select-none relative",
+                                "bg-[var(--card)]/80 dark:bg-[var(--card)]/60 backdrop-blur-md p-4 rounded-2xl border border-[var(--border)] shadow-sm mb-3 group cursor-pointer select-none relative transition-colors duration-200",
                                 snapshot.isDragging
-                                  ? "shadow-2xl border-[var(--primary)] ring-1 ring-[var(--primary)]/40 opacity-95 rotate-1 scale-[1.02]"
-                                  : "hover:border-[var(--primary)]/40 hover:shadow-md transition-all duration-150",
+                                  ? "shadow-2xl border-[var(--primary)] ring-2 ring-[var(--primary)]/40 opacity-95 rotate-2 scale-105 z-50 bg-[var(--card)]"
+                                  : "hover:border-[var(--primary)]/50 hover:shadow-lg hover:bg-[var(--card)]",
                               )}
                               style={{ ...provided.draggableProps.style }}
                             >
@@ -353,12 +355,14 @@ export function BoardClient() {
                                   {task.labels.map((label: any) => (
                                     <div
                                       key={label.id}
-                                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[var(--muted)]/50 text-[var(--foreground)] text-xs font-medium border border-[var(--border)]"
+                                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border"
+                                      style={{ 
+                                        backgroundColor: `${label.color}15`, 
+                                        color: label.color,
+                                        borderColor: `${label.color}30`
+                                      }}
                                     >
-                                      <Tag
-                                        className="w-3 h-3 text-[var(--muted-foreground)]"
-                                        style={{ color: label.color }}
-                                      />
+                                      <Tag className="w-3 h-3" />
                                       {label.name}
                                     </div>
                                   ))}

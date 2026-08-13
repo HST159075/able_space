@@ -151,7 +151,6 @@ export function CreateTaskModal({ open, onClose, defaultStatus = 'TODO' }: Creat
             
             <div className="flex items-center gap-1.5 ml-2">
               <Input 
-                size="sm"
                 placeholder="New label..." 
                 value={newLabelName}
                 onChange={(e) => setNewLabelName(e.target.value)}
