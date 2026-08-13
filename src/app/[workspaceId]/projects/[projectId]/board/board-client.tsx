@@ -306,18 +306,26 @@ export function BoardClient() {
                                 <div className="flex items-center gap-2">
                                   {task.assignees?.length > 0 ? (
                                     <div className="flex items-center gap-2">
-                                      <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[var(--primary)] to-indigo-500 flex items-center justify-center text-[10px] text-white font-bold shrink-0">
-                                        {task.assignees[0].name?.charAt(0)}
-                                      </div>
+                                      {task.assignees[0].avatarUrl ? (
+                                        <img src={task.assignees[0].avatarUrl} alt="Avatar" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                                      ) : (
+                                        <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[var(--primary)] to-indigo-500 flex items-center justify-center text-[10px] text-white font-bold shrink-0">
+                                          {task.assignees[0].name?.charAt(0)}
+                                        </div>
+                                      )}
                                       <span className="text-sm font-medium text-[var(--foreground)] truncate max-w-[80px]">
                                         {task.assignees[0].name}
                                       </span>
                                     </div>
                                   ) : task.reporter ? (
                                     <div className="flex items-center gap-2">
-                                      <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-[10px] text-white font-bold shrink-0">
-                                        {task.reporter.name?.charAt(0)}
-                                      </div>
+                                      {task.reporter.avatarUrl ? (
+                                        <img src={task.reporter.avatarUrl} alt="Avatar" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                                      ) : (
+                                        <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-[10px] text-white font-bold shrink-0">
+                                          {task.reporter.name?.charAt(0)}
+                                        </div>
+                                      )}
                                       <span className="text-sm font-medium text-[var(--foreground)] truncate max-w-[80px]">
                                         {task.reporter.name}
                                       </span>
