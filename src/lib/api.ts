@@ -126,6 +126,17 @@ export const useLabels = (workspaceId: string) => {
   });
 };
 
+export const useCreateLabel = (workspaceId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { name: string; color?: string }) => {
+      const res = await api.post(`/workspaces/${workspaceId}/labels`, payload);
+      return res.data.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['labels', workspaceId] }),
+  });
+};
+
 // --- Tasks ---
 export const useTasks = (projectId: string) => {
   return useQuery({

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useRef, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { useWorkspace, useLabels, useTeams } from "@/lib/api";
+import { useWorkspace, useLabels, useTeams, useCreateLabel } from "@/lib/api";
 import {
   Calendar,
   MessageSquare,
@@ -97,6 +97,8 @@ export function TaskDetailModal({
   const { data: workspace } = useWorkspace(workspaceId);
   const { data: workspaceLabels } = useLabels(workspaceId);
   const { data: workspaceTeams } = useTeams(workspaceId);
+  const createLabel = useCreateLabel(workspaceId);
+  const [newLabelName, setNewLabelName] = useState("");
 
   const { data: task, isLoading } = useQuery({
     queryKey: ["task", taskId],
@@ -406,7 +408,7 @@ export function TaskDetailModal({
                             </div>
                             <div className="flex items-center gap-1.5">
                               {sub.priority === "HIGH" ||
-                              sub.priority === "URGENT" ? (
+                                sub.priority === "URGENT" ? (
                                 <span className="text-red-500 font-medium flex items-center gap-1">
                                   <div className="w-2.5 h-2.5 rounded-sm bg-red-500/20 flex items-end p-[1px] gap-[1px]">
                                     <div className="w-[2px] h-[3px] bg-red-500"></div>
@@ -531,9 +533,9 @@ export function TaskDetailModal({
                                 <span className="text-xs text-[var(--muted-foreground)]">
                                   {c.createdAt
                                     ? format(
-                                        new Date(c.createdAt),
-                                        "MMM d, h:mm a",
-                                      )
+                                      new Date(c.createdAt),
+                                      "MMM d, h:mm a",
+                                    )
                                     : "just now"}
                                 </span>
                               </div>
@@ -883,13 +885,13 @@ export function TaskDetailModal({
                             >
                               {task.assignees?.length > 0
                                 ? task.assignees.map((a: any) => (
-                                    <span
-                                      key={a.id}
-                                      className="bg-[var(--primary)] text-[var(--primary-foreground)] px-2 py-0.5 rounded-full text-xs"
-                                    >
-                                      {a.name}
-                                    </span>
-                                  ))
+                                  <span
+                                    key={a.id}
+                                    className="bg-[var(--primary)] text-[var(--primary-foreground)] px-2 py-0.5 rounded-full text-xs"
+                                  >
+                                    {a.name}
+                                  </span>
+                                ))
                                 : "Add members..."}
                             </div>
                             {membersMenuOpen && (
@@ -910,8 +912,8 @@ export function TaskDetailModal({
                                           ) || [];
                                         const newIds = isSelected
                                           ? currentIds.filter(
-                                              (id: string) => id !== m.id,
-                                            )
+                                            (id: string) => id !== m.id,
+                                          )
                                           : [...currentIds, m.id];
                                         updateTask.mutate({
                                           assigneeIds: newIds,
@@ -962,53 +964,92 @@ export function TaskDetailModal({
                             >
                               {task.labels?.length > 0
                                 ? task.labels.map((l: any) => (
-                                    <span
-                                      key={l.id}
-                                      className="px-2 py-0.5 rounded text-white text-xs"
-                                      style={{ backgroundColor: l.color }}
-                                    >
-                                      {l.name}
-                                    </span>
-                                  ))
+                                  <span
+                                    key={l.id}
+                                    className="px-2 py-0.5 rounded text-white text-xs"
+                                    style={{ backgroundColor: l.color }}
+                                  >
+                                    {l.name}
+                                  </span>
+                                ))
                                 : "Add labels..."}
                             </div>
                             {labelsMenuOpen && (
-                              <div className="absolute top-full left-0 mt-1 w-48 bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-xl py-1 z-50 max-h-48 overflow-y-auto">
-                                {workspaceLabels?.map((l: any) => {
-                                  const isSelected = task.labels?.some(
-                                    (lbl: any) => lbl.id === l.id,
-                                  );
-                                  return (
-                                    <div
-                                      key={l.id}
-                                      className="px-3 py-2 text-sm hover:bg-[var(--muted)] cursor-pointer flex items-center justify-between"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const currentIds =
-                                          task.labels?.map(
-                                            (lbl: any) => lbl.id,
-                                          ) || [];
-                                        const newIds = isSelected
-                                          ? currentIds.filter(
+                              <div className="absolute top-full left-0 mt-1 w-48 bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-xl py-1 z-50 flex flex-col">
+                                <div className="max-h-48 overflow-y-auto">
+                                  {workspaceLabels?.map((l: any) => {
+                                    const isSelected = task.labels?.some(
+                                      (lbl: any) => lbl.id === l.id,
+                                    );
+                                    return (
+                                      <div
+                                        key={l.id}
+                                        className="px-3 py-2 text-sm hover:bg-[var(--muted)] cursor-pointer flex items-center justify-between"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          const currentIds =
+                                            task.labels?.map(
+                                              (lbl: any) => lbl.id,
+                                            ) || [];
+                                          const newIds = isSelected
+                                            ? currentIds.filter(
                                               (id: string) => id !== l.id,
                                             )
-                                          : [...currentIds, l.id];
-                                        updateTask.mutate({ labelIds: newIds });
-                                      }}
-                                    >
-                                      <div className="flex items-center gap-2">
-                                        <div
-                                          className="w-3 h-3 rounded-full"
-                                          style={{ backgroundColor: l.color }}
-                                        />
-                                        {l.name}
+                                            : [...currentIds, l.id];
+                                          updateTask.mutate({ labelIds: newIds });
+                                        }}
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <div
+                                            className="w-3 h-3 rounded-full"
+                                            style={{ backgroundColor: l.color || "#3b82f6" }}
+                                          />
+                                          {l.name}
+                                        </div>
+                                        {isSelected && (
+                                          <Check className="w-4 h-4" />
+                                        )}
                                       </div>
-                                      {isSelected && (
-                                        <Check className="w-4 h-4" />
-                                      )}
-                                    </div>
-                                  );
-                                })}
+                                    );
+                                  })}
+                                </div>
+                                <div className="p-2 border-t border-[var(--border)] mt-1">
+                                  <form 
+                                    onSubmit={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      if (newLabelName.trim()) {
+                                        createLabel.mutate(
+                                          { name: newLabelName.trim(), color: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0') },
+                                          {
+                                            onSuccess: (newLabel) => {
+                                              setNewLabelName("");
+                                              const currentIds = task.labels?.map((lbl: any) => lbl.id) || [];
+                                              updateTask.mutate({ labelIds: [...currentIds, newLabel.id] });
+                                            }
+                                          }
+                                        );
+                                      }
+                                    }}
+                                    className="flex items-center gap-1.5"
+                                  >
+                                    <input 
+                                      type="text"
+                                      placeholder="New label..." 
+                                      value={newLabelName}
+                                      onChange={(e) => setNewLabelName(e.target.value)}
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="flex h-7 w-full rounded-md border border-[var(--border)] bg-transparent px-2 py-1 text-xs shadow-sm transition-colors placeholder:text-[var(--muted-foreground)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-50"
+                                    />
+                                    <button 
+                                      type="submit" 
+                                      disabled={createLabel.isPending || !newLabelName.trim()}
+                                      className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] shadow hover:bg-[var(--primary)]/90 disabled:opacity-50"
+                                    >
+                                      {createLabel.isPending ? <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+                                    </button>
+                                  </form>
+                                </div>
                               </div>
                             )}
                           </div>
@@ -1029,13 +1070,13 @@ export function TaskDetailModal({
                             >
                               {task.teams?.length > 0
                                 ? task.teams.map((t: any) => (
-                                    <span
-                                      key={t.id}
-                                      className="bg-[var(--muted)] border border-[var(--border)] px-2 py-0.5 rounded text-xs"
-                                    >
-                                      {t.name}
-                                    </span>
-                                  ))
+                                  <span
+                                    key={t.id}
+                                    className="bg-[var(--muted)] border border-[var(--border)] px-2 py-0.5 rounded text-xs"
+                                  >
+                                    {t.name}
+                                  </span>
+                                ))
                                 : "Add teams..."}
                             </div>
                             {teamsMenuOpen && (
@@ -1055,8 +1096,8 @@ export function TaskDetailModal({
                                           [];
                                         const newIds = isSelected
                                           ? currentIds.filter(
-                                              (id: string) => id !== t.id,
-                                            )
+                                            (id: string) => id !== t.id,
+                                          )
                                           : [...currentIds, t.id];
                                         updateTask.mutate({ teamIds: newIds });
                                       }}

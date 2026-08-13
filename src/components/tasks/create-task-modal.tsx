@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useCreateTask, useLabels } from '@/lib/api';
+import { useCreateTask, useLabels, useCreateLabel } from '@/lib/api';
+import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -44,6 +45,8 @@ export function CreateTaskModal({ open, onClose, defaultStatus = 'TODO' }: Creat
 
   const createTask = useCreateTask(projectId);
   const { data: labels } = useLabels(workspaceId);
+  const createLabel = useCreateLabel(workspaceId);
+  const [newLabelName, setNewLabelName] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,27 +131,73 @@ export function CreateTaskModal({ open, onClose, defaultStatus = 'TODO' }: Creat
         </div>
 
         {/* Labels */}
-        {labels?.length > 0 && (
-          <div>
-            <label className="text-sm font-medium block mb-2">Labels</label>
-            <div className="flex flex-wrap gap-2">
-              {labels.map((label: any) => (
-                <button
-                  key={label.id}
-                  type="button"
-                  onClick={() => toggleLabel(label.id)}
-                  className={cn(
-                    'px-2.5 py-1 rounded-full text-xs font-medium text-white transition-all',
-                    selectedLabels.includes(label.id) ? 'ring-2 ring-offset-1 ring-[var(--foreground)] scale-105' : 'opacity-70 hover:opacity-100'
-                  )}
-                  style={{ backgroundColor: label.color }}
-                >
-                  {label.name}
-                </button>
-              ))}
+        <div>
+          <label className="text-sm font-medium block mb-2">Labels</label>
+          <div className="flex flex-wrap gap-2 items-center">
+            {labels?.map((label: any) => (
+              <button
+                key={label.id}
+                type="button"
+                onClick={() => toggleLabel(label.id)}
+                className={cn(
+                  'px-2.5 py-1 rounded-full text-xs font-medium text-white transition-all',
+                  selectedLabels.includes(label.id) ? 'ring-2 ring-offset-1 ring-[var(--foreground)] scale-105' : 'opacity-70 hover:opacity-100'
+                )}
+                style={{ backgroundColor: label.color || "#3b82f6" }}
+              >
+                {label.name}
+              </button>
+            ))}
+            
+            <div className="flex items-center gap-1.5 ml-2">
+              <Input 
+                size="sm"
+                placeholder="New label..." 
+                value={newLabelName}
+                onChange={(e) => setNewLabelName(e.target.value)}
+                className="h-7 text-xs w-24 px-2"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (newLabelName.trim()) {
+                      createLabel.mutate(
+                        { name: newLabelName.trim(), color: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0') },
+                        {
+                          onSuccess: (newLabel) => {
+                            setNewLabelName('');
+                            setSelectedLabels(prev => [...prev, newLabel.id]);
+                          }
+                        }
+                      );
+                    }
+                  }
+                }}
+              />
+              <Button 
+                type="button"
+                size="sm" 
+                variant="secondary"
+                disabled={createLabel.isPending || !newLabelName.trim()}
+                onClick={() => {
+                  if (newLabelName.trim()) {
+                    createLabel.mutate(
+                      { name: newLabelName.trim(), color: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0') },
+                      {
+                        onSuccess: (newLabel) => {
+                          setNewLabelName('');
+                          setSelectedLabels(prev => [...prev, newLabel.id]);
+                        }
+                      }
+                    );
+                  }
+                }}
+                className="h-7 px-2"
+              >
+                {createLabel.isPending ? <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+              </Button>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-2 border-t border-[var(--border)]">
