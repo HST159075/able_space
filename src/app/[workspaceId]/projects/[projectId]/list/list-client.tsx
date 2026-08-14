@@ -16,7 +16,7 @@ export function ListClient() {
   const params = useParams();
   const projectId = params.projectId as string;
 
-  const { data: tasks, isLoading } = useTasks(projectId);
+  const { data: tasks, isLoading, refetch: refetchTasks } = useTasks(projectId);
   const deleteTask = useDeleteTask(projectId);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [createModal, setCreateModal] = useState(false);
@@ -269,7 +269,10 @@ export function ListClient() {
       <TaskDetailModal
         taskId={selectedTaskId}
         projectId={projectId}
-        onClose={() => setSelectedTaskId(null)}
+        onClose={() => {
+          setSelectedTaskId(null);
+          refetchTasks();
+        }}
       />
       <CreateTaskModal
         open={createModal}

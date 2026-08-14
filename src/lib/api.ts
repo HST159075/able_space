@@ -34,7 +34,7 @@ export const useCreateWorkspace = () => {
   });
 };
 
-// --- Teams ---
+
 export const useTeams = (workspaceId: string) => {
   return useQuery({
     queryKey: ['teams', workspaceId],
@@ -146,6 +146,8 @@ export const useTasks = (projectId: string) => {
       return res.data.data;
     },
     enabled: !!projectId,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 };
 

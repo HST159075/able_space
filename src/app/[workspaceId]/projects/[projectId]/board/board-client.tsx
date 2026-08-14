@@ -4,6 +4,7 @@ import { useTasks, useUpdateTaskStatus, useDeleteTask } from "@/lib/api";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useParams } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Plus,
   Calendar,
@@ -30,9 +31,10 @@ export function BoardClient() {
   const params = useParams();
   const projectId = params.projectId as string;
 
-  const { data: rawTasks, isLoading } = useTasks(projectId);
+  const { data: rawTasks, isLoading, refetch: refetchTasks } = useTasks(projectId);
   const updateTask = useUpdateTaskStatus(projectId);
   const deleteTask = useDeleteTask(projectId);
+  const queryClient = useQueryClient();
 
   const [tasks, setTasks] = useState<any[]>([]);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
@@ -400,7 +402,10 @@ export function BoardClient() {
       <TaskDetailModal
         taskId={selectedTaskId}
         projectId={projectId}
-        onClose={() => setSelectedTaskId(null)}
+        onClose={() => {
+          setSelectedTaskId(null);
+          refetchTasks();
+        }}
       />
       <CreateTaskModal
         open={createModal.open}

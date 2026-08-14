@@ -151,11 +151,17 @@ export function TaskDetailModal({
       );
       return res.data.data;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["task", taskId] });
       queryClient.invalidateQueries({ queryKey: ["tasks", projectId] });
       queryClient.invalidateQueries({ queryKey: ["activity", taskId] });
-      toast.success("Task updated");
+      // Only show toast for non-label/non-team/non-assignee updates
+      const silentKeys = ['labelIds', 'assigneeIds', 'teamIds'];
+      const isSilent = Object.keys(variables).some(k => silentKeys.includes(k));
+      if (!isSilent) toast.success("Task updated");
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || "Failed to update task");
     },
   });
 
