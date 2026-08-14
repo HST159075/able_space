@@ -125,9 +125,10 @@ export function ListClient() {
 
       <TaskToolbar state={filterState} onChange={setFilterState} />
 
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
-        {/* Header */}
-        <div className="grid grid-cols-[1fr_120px_120px_120px_60px] gap-4 px-4 py-2.5 border-b border-[var(--border)] bg-[var(--muted)]/50 text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-sm overflow-x-auto">
+        <div className="min-w-[700px]">
+          {/* Header */}
+          <div className="grid grid-cols-[1fr_120px_120px_120px_60px] gap-4 px-4 py-2.5 border-b border-[var(--border)] bg-[var(--muted)]/50 text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
           <span>Task</span>
           <span>Status</span>
           <span>Priority</span>
@@ -264,6 +265,7 @@ export function ListClient() {
               ))}
           </motion.div>
         ))}
+        </div>
       </div>
 
       <TaskDetailModal
