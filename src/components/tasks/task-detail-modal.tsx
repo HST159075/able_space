@@ -1023,8 +1023,15 @@ export function TaskDetailModal({
                                         {
                                           onSuccess: (newLabel: any) => {
                                             setNewLabelName("");
-                                            const currentIds = task.labels?.map((lbl: any) => lbl.id) || [];
-                                            updateTask.mutate({ labelIds: [...currentIds, newLabel.id] });
+                                            if (newLabel && newLabel.id) {
+                                              const currentIds = task.labels?.map((lbl: any) => lbl.id) || [];
+                                              updateTask.mutate({ labelIds: [...currentIds, newLabel.id] });
+                                            } else {
+                                              toast.error("Label created but no ID returned");
+                                            }
+                                          },
+                                          onError: (err: any) => {
+                                            toast.error(err?.response?.data?.message || err.message || "Failed to create label");
                                           }
                                         }
                                       );
@@ -1043,8 +1050,15 @@ export function TaskDetailModal({
                                       {
                                         onSuccess: (newLabel: any) => {
                                           setNewLabelName("");
-                                          const currentIds = task.labels?.map((lbl: any) => lbl.id) || [];
-                                          updateTask.mutate({ labelIds: [...currentIds, newLabel.id] });
+                                          if (newLabel && newLabel.id) {
+                                            const currentIds = task.labels?.map((lbl: any) => lbl.id) || [];
+                                            updateTask.mutate({ labelIds: [...currentIds, newLabel.id] });
+                                          } else {
+                                            toast.error("Label created but no ID returned");
+                                          }
+                                        },
+                                        onError: (err: any) => {
+                                            toast.error(err?.response?.data?.message || err.message || "Failed to create label");
                                         }
                                       }
                                     );
