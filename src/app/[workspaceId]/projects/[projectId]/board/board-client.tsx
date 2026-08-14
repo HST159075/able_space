@@ -340,21 +340,12 @@ export function BoardClient() {
                                     </span>
                                   )}
                                 </div>
-                                {task.dueDate && (() => {
-                                  const due = new Date(task.dueDate);
-                                  const isOverdue = due < new Date();
-                                  return (
-                                    <div className={cn(
-                                      "flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium border",
-                                      isOverdue
-                                        ? "bg-red-50 text-red-600 border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-900/60"
-                                        : "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
-                                    )}>
-                                      <Calendar className="w-3.5 h-3.5" />
-                                      {due.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
-                                    </div>
-                                  );
-                                })()}
+                                {task.dueDate && (
+                                  <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400 text-xs font-medium border border-red-100 dark:border-red-900/50">
+                                    <Calendar className="w-3.5 h-3.5" />
+                                    {new Date(task.dueDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
+                                  </div>
+                                )}
                               </div>
 
                               {/* Row 3: Labels */}
