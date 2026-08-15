@@ -220,7 +220,7 @@ export function TaskDetailModal({
         </div>
       ) : (
         <div
-          className="flex flex-col h-full bg-white dark:bg-[#09090b] rounded-2xl overflow-hidden"
+          className="flex flex-col h-full bg-[var(--card)] rounded-2xl overflow-hidden"
           onClick={() => {
             setPriorityMenuOpen(false);
             setStatusMenuOpen(false);
@@ -232,9 +232,9 @@ export function TaskDetailModal({
           {/* Top Bar inside modal */}
           <div className="flex flex-col md:flex-row h-full overflow-hidden">
             {/* Left Column (Main Content) */}
-            <div className="flex-1 overflow-y-auto flex flex-col min-h-[50vh] bg-white dark:bg-[#09090b]">
+            <div className="flex-1 overflow-y-auto flex flex-col min-h-[50vh] bg-[var(--card)]">
               {/* Header inside left column */}
-              <div className="flex items-center justify-between px-8 py-5 border-b border-[var(--border)] shrink-0 sticky top-0 bg-white dark:bg-[#09090b] z-10">
+              <div className="flex items-center justify-between px-8 py-5 border-b border-[var(--border)] shrink-0 sticky top-0 bg-[var(--card)] z-10">
                 <div className="flex items-center gap-3 flex-1 min-w-0 pr-4">
                   <h1 className="text-2xl font-bold truncate text-[var(--foreground)]">
                     {task.title}

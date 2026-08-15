@@ -46,7 +46,7 @@ export function Modal({ open, onClose, title, children, size = 'lg' }: ModalProp
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={`w-full ${sizeMap[size]} bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-2xl flex flex-col max-h-[90vh]`}
+            className={`w-full ${sizeMap[size]} border border-[var(--border)] rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden`}
           >
             {title && (
               <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)] shrink-0">
@@ -59,7 +59,7 @@ export function Modal({ open, onClose, title, children, size = 'lg' }: ModalProp
                 </button>
               </div>
             )}
-            <div className="overflow-y-auto flex-1">
+            <div className="flex-1 overflow-hidden">
               {children}
             </div>
           </motion.div>
